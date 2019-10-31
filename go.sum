@@ -1,0 +1,12 @@
+github.com/cbroglie/mustache v1.0.1 h1:ivMg8MguXq/rrz2eu3tw6g3b16+PQhoTn6EZAhst2mw=
+github.com/cbroglie/mustache v1.0.1/go.mod h1:R/RUa+SobQ14qkP4jtx5Vke5sDytONDQXNLPY/PO69g=
+github.com/go-ozzo/ozzo-dbx v1.0.15 h1:cahBHmsueUkRDhSM71f6TLfd1LtYN4XDce7iCblSYKA=
+github.com/go-ozzo/ozzo-dbx v1.0.15/go.mod h1:48NXRgCxSU5JUSW+EA5lnokrL7ql1j6Qh2RsWeh6Fvs=
+github.com/go-ozzo/ozzo-log v0.0.0-20160703175702-610cdd147d9a h1:L9+oKMCFD4Ow6SMmVCxdKyz/M7PG/u8vfo8bDyM4Mz0=
+github.com/go-ozzo/ozzo-log v0.0.0-20160703175702-610cdd147d9a/go.mod h1:5ohBI8MDCgdbxzLGFG/HvihaiL2TzD9LupyeLOTBSbQ=
+github.com/go-sql-driver/mysql v1.4.1 h1:g24URVg0OFbNUTx9qqY1IRZ9D9z3iPyi5zKhQZpNwpA=
+github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
+github.com/lib/pq v1.2.0 h1:LXpIM/LZ5xGFhOpXAQUIMM1HdyqzVYM13zNdjCEEcA0=
+github.com/lib/pq v1.2.0/go.mod h1:5WUZQaWbwv1U+lTReE5YruASi9Al49XbQIvNi/34Woo=
+github.com/magiconair/properties v1.8.1 h1:ZC2Vc7/ZFkGmsVC9KvOjumD+G5lXy2RtTKyzRKO2BQ4=
+github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=

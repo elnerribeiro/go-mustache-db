@@ -192,7 +192,8 @@ func sql(filename string) (*string, error) {
 	return &retStr, nil
 }
 
-func initDb(params ...string) error {
+//InitDb inicializa a conexao com o DB
+func InitDb(params ...string) error {
 	if database != nil {
 		return nil
 	}

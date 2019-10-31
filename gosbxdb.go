@@ -206,16 +206,11 @@ func InitDb(params ...string) error {
 	if len(params) == 1 {
 		fileName = &params[0]
 	}
-	if len(params) == 2 {
-		fileName = &params[0]
-		db = &params[1]
-	}
-	if len(params) == 3 {
-		fileName = &params[0]
-		db = &params[1]
-		propertyURL = &params[2]
-	}
 	p := properties.MustLoadFile(*fileName, properties.UTF8)
+	dialeto := p.GetString("dialeto", "")
+	if dialeto != "" {
+		db = &dialeto
+	}
 	banco, err := dbx.Open(*db, p.GetString(*propertyURL, ""))
 	printSQL = p.GetBool("printSql", false)
 	if err != nil {

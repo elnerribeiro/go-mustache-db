@@ -1,7 +1,7 @@
-# gosbxdb
+# go-mustache-db
 Biblioteca para acesso a dados (Postgres e MySQL)
 
-import "github.com/elnerribeiro/gosbxdb"
+import "github.com/elnerribeiro/go-mustache-db"
 
 Arquivos necessários:
 

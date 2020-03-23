@@ -1,4 +1,4 @@
-package gosbxdb
+package gomustachedb
 
 import (
 	sqlpack "database/sql"

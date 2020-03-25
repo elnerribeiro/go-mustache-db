@@ -90,7 +90,7 @@ func Insert(transacao *Transacao, table string, params Dados, pk string) (sqlpac
 	q := transacao.tx.Insert(table, dbx.Params(params))
 
 	if isPostgres {
-		return transacao.tx.NewQuery(q.SQL() + " RETURNING " + pk).Execute()
+		return transacao.tx.NewQuery(q.SQL() + " RETURNING " + pk).Bind(dbx.Params(params)).Execute()
 	}
 	return q.Execute()
 }

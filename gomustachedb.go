@@ -21,7 +21,6 @@ var database *dbx.DB = nil
 var printSQL bool
 var mapQueries = make(map[string]string)
 var mapTimes = make(map[string]int64)
-var isPostgres = false
 
 //Dados e um hashmap
 type Dados map[string]interface{}
@@ -88,10 +87,6 @@ func Insert(transacao *Transacao, table string, params Dados, pk string) (sqlpac
 		return nil, errors.New("not inside transaction")
 	}
 	q := transacao.tx.Insert(table, dbx.Params(params))
-
-	if isPostgres {
-		return transacao.tx.NewQuery(q.SQL() + " RETURNING " + pk).Bind(dbx.Params(params)).Execute()
-	}
 	return q.Execute()
 }
 
@@ -248,7 +243,6 @@ func InitDb(params ...string) error {
 	if dialeto != "" {
 		db = &dialeto
 	}
-	isPostgres = (dialeto == "postgres")
 	banco, err := dbx.Open(*db, p.GetString(*propertyURL, ""))
 	printSQL = p.GetBool("printSql", false)
 	if err != nil {

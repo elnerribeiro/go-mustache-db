@@ -4,6 +4,7 @@ import (
 	sqlpack "database/sql"
 	"errors"
 	"io/ioutil"
+	"sync"
 	"time"
 
 	mustache "github.com/cbroglie/mustache"
@@ -21,6 +22,7 @@ var database *dbx.DB = nil
 var printSQL bool
 var mapQueries = make(map[string]string)
 var mapTimes = make(map[string]int64)
+var isPostgres = false
 
 //Dados e um hashmap
 type Dados map[string]interface{}
@@ -122,6 +124,31 @@ func ExecuteSQL(transacao *Transacao, query string, params Dados) (sqlpack.Resul
 		return nil, err2
 	}
 	return result, nil
+}
+
+// InsertReturningPostgres executa um insert e traz o id inserido
+func InsertReturningPostgres(transacao *Transacao, table string, params Dados, pk string, returnType interface{}) (interface{}, error) {
+	if !isPostgres {
+		return nil, errors.New("not in Postgres")
+	}
+	if database == nil {
+		return nil, errors.New("database not initialized")
+	}
+	if transacao == nil && transacao.tx == nil {
+		return nil, errors.New("not inside transaction")
+	}
+	var mutex sync.Mutex
+	mutex.Lock()
+	defer mutex.Unlock()
+	var q *dbx.Query
+	q = transacao.tx.Insert(table, dbx.Params(params))
+	q.Execute()
+	q = transacao.tx.NewQuery("select max(" + pk + ") from " + table)
+	err2 := q.One(returnType)
+	if err2 != nil {
+		return nil, err2
+	}
+	return returnType, nil
 }
 
 // SelectAll executa um select no banco e retorna todos os resultados
@@ -243,6 +270,7 @@ func InitDb(params ...string) error {
 	if dialeto != "" {
 		db = &dialeto
 	}
+	isPostgres = (dialeto == "postgres")
 	banco, err := dbx.Open(*db, p.GetString(*propertyURL, ""))
 	printSQL = p.GetBool("printSql", false)
 	if err != nil {

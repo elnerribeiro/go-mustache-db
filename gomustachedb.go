@@ -79,7 +79,7 @@ func Update(transacao *Transacao, table string, params Dados, filters Dados) (sq
 }
 
 // Insert insere uma linha na tabela
-func Insert(transacao *Transacao, table string, params Dados, pk string) (sqlpack.Result, error) {
+func Insert(transacao *Transacao, table string, params Dados) (sqlpack.Result, error) {
 	if database == nil {
 		return nil, errors.New("database not initialized")
 	}

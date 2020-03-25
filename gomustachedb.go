@@ -4,6 +4,7 @@ import (
 	sqlpack "database/sql"
 	"errors"
 	"io/ioutil"
+	"time"
 
 	mustache "github.com/cbroglie/mustache"
 	dbx "github.com/go-ozzo/ozzo-dbx"
@@ -18,6 +19,8 @@ import (
 
 var database *dbx.DB = nil
 var printSQL bool
+var mapQueries = make(map[string]string)
+var mapTimes = make(map[string]int64)
 
 //Dados e um hashmap
 type Dados map[string]interface{}
@@ -109,6 +112,8 @@ func ExecuteSQL(transacao *Transacao, query string, params Dados) (sqlpack.Resul
 	} else {
 		q = database.NewQuery(*sql)
 	}
+	q.Prepare()
+	defer q.Close()
 	if params != nil {
 		q.Bind(dbx.Params(params))
 	}
@@ -141,6 +146,8 @@ func SelectAll(transacao *Transacao, query string, returnType interface{}, param
 	} else {
 		q = database.NewQuery(*sql)
 	}
+	q.Prepare()
+	defer q.Close()
 	if params != nil {
 		q.Bind(dbx.Params(params))
 	}
@@ -173,6 +180,8 @@ func SelectOne(transacao *Transacao, query string, returnType interface{}, param
 	} else {
 		q = database.NewQuery(*sql)
 	}
+	q.Prepare()
+	defer q.Close()
 	if params != nil {
 		q.Bind(dbx.Params(params))
 	}
@@ -184,12 +193,35 @@ func SelectOne(transacao *Transacao, query string, returnType interface{}, param
 }
 
 func sql(filename string) (*string, error) {
+	if mapQueries[filename] != "" {
+		retStr := mapQueries[filename]
+		mapTimes[filename] = time.Now().Unix()
+		return &retStr, nil
+	}
 	ret, err := ioutil.ReadFile("./consultas/" + filename + ".sql")
 	if err != nil {
 		return nil, err
 	}
 	retStr := string(ret)
+	insertIntoMap(filename, retStr)
 	return &retStr, nil
+}
+
+func insertIntoMap(filename, query string) {
+	if len(mapQueries) >= 100 {
+		var minTime = time.Now().Unix()
+		var minKey = ""
+		for k, v := range mapTimes {
+			if v <= minTime {
+				minKey = k
+				minTime = v
+			}
+		}
+		delete(mapQueries, minKey)
+		delete(mapTimes, minKey)
+	}
+	mapQueries[filename] = query
+	mapTimes[filename] = time.Now().Unix()
 }
 
 //InitDb inicializa a conexao com o DB

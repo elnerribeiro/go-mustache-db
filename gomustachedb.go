@@ -88,6 +88,7 @@ func Insert(transacao *Transacao, table string, params Dados, pk string) (sqlpac
 		return nil, errors.New("not inside transaction")
 	}
 	q := transacao.tx.Insert(table, dbx.Params(params))
+
 	if isPostgres {
 		return transacao.tx.NewQuery(q.SQL() + " RETURNING " + pk).Execute()
 	}

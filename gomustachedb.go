@@ -143,7 +143,7 @@ func InsertReturningPostgres(transacao *Transacao, table string, params Dados, p
 	var q *dbx.Query
 	q = transacao.tx.Insert(table, dbx.Params(params))
 	q.Execute()
-	q = transacao.tx.NewQuery("select max(" + pk + ") from " + table)
+	q = transacao.tx.NewQuery("select max(" + pk + ") as " + pk + " from " + table)
 	err2 := q.One(returnType)
 	if err2 != nil {
 		return nil, err2

@@ -1,7 +1,7 @@
 package gomustachedb
 
 import (
-	sqlpack "Database/sql"
+	sqlpack "database/sql"
 	"errors"
 	"io/ioutil"
 	"runtime"

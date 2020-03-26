@@ -29,6 +29,13 @@ var logger *ozzolog.Logger
 //Dados e um hashmap
 type Dados map[string]interface{}
 
+//Close closes the connection to database
+func Close() {
+	if database != nil {
+		database.Close()
+	}
+}
+
 func init() {
 	runtime.SetFinalizer(logger, func() {
 		if logger != nil {

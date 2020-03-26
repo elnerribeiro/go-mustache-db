@@ -1,7 +1,7 @@
 package gomustachedb
 
 import (
-	sqlpack "database/sql"
+	sqlpack "Database/sql"
 	"errors"
 	"io/ioutil"
 	"runtime"
@@ -19,7 +19,7 @@ import (
 	"github.com/magiconair/properties"
 )
 
-//Database is the database connection
+//Database is the Database connection
 var Database *dbx.DB = nil
 var printSQL bool
 var mapQueries = make(map[string]string)
@@ -30,10 +30,10 @@ var logger *ozzolog.Logger
 //Dados e um hashmap
 type Dados map[string]interface{}
 
-//Close closes the connection to database
+//Close closes the connection to Database
 func Close() {
-	if database != nil {
-		database.Close()
+	if Database != nil {
+		Database.Close()
 	}
 }
 
@@ -62,11 +62,11 @@ func Rollback(tx *Transacao) {
 
 //GetTransaction retorna uma transacao
 func GetTransaction() (*Transacao, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[GetTransaction] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
-	tx, err := database.Begin()
+	tx, err := Database.Begin()
 	if err != nil {
 		logError("[GetTransaction] Error starting transaction: %s", err)
 		return nil, err
@@ -78,9 +78,9 @@ func GetTransaction() (*Transacao, error) {
 
 // Delete remove uma linha na tabela
 func Delete(transacao *Transacao, table string, filters Dados) (sqlpack.Result, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[Delete] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	if transacao == nil || transacao.tx == nil {
 		logError("[Delete] Transaction not found.")
@@ -92,9 +92,9 @@ func Delete(transacao *Transacao, table string, filters Dados) (sqlpack.Result, 
 
 // Update altera uma linha na tabela
 func Update(transacao *Transacao, table string, params Dados, filters Dados) (sqlpack.Result, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[Update] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	if transacao == nil || transacao.tx == nil {
 		logError("[Update] Transaction not found.")
@@ -106,9 +106,9 @@ func Update(transacao *Transacao, table string, params Dados, filters Dados) (sq
 
 // Insert insere uma linha na tabela
 func Insert(transacao *Transacao, table string, params Dados) (sqlpack.Result, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[Insert] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	if transacao == nil || transacao.tx == nil {
 		logError("[Insert] Transaction not found.")
@@ -120,9 +120,9 @@ func Insert(transacao *Transacao, table string, params Dados) (sqlpack.Result, e
 
 // ExecuteSQL executa um SQL e traz o retorno
 func ExecuteSQL(transacao *Transacao, query string, params Dados) (sqlpack.Result, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[ExecuteSQL] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	sql, err := sql(query)
 	if err != nil {
@@ -140,7 +140,7 @@ func ExecuteSQL(transacao *Transacao, query string, params Dados) (sqlpack.Resul
 	if transacao != nil && transacao.tx != nil {
 		q = transacao.tx.NewQuery(*sql)
 	} else {
-		q = database.NewQuery(*sql)
+		q = Database.NewQuery(*sql)
 	}
 	q.Prepare()
 	defer q.Close()
@@ -157,9 +157,9 @@ func ExecuteSQL(transacao *Transacao, query string, params Dados) (sqlpack.Resul
 
 // InsertReturningPostgres executa um insert e traz o id inserido
 func InsertReturningPostgres(transacao *Transacao, table string, params Dados, pk string, returnType interface{}) (interface{}, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[InsertReturningPostgres] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	if !isPostgres {
 		logError("[InsertReturningPostgres] Only works on Postgres.")
@@ -186,9 +186,9 @@ func InsertReturningPostgres(transacao *Transacao, table string, params Dados, p
 
 // SelectAll executa um select no banco e retorna todos os resultados
 func SelectAll(transacao *Transacao, query string, returnType interface{}, params Dados) (interface{}, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[SelectAll] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	sql, err := sql(query)
 	if err != nil {
@@ -207,7 +207,7 @@ func SelectAll(transacao *Transacao, query string, returnType interface{}, param
 	if transacao != nil && transacao.tx != nil {
 		q = transacao.tx.NewQuery(*sql)
 	} else {
-		q = database.NewQuery(*sql)
+		q = Database.NewQuery(*sql)
 	}
 	q.Prepare()
 	defer q.Close()
@@ -224,9 +224,9 @@ func SelectAll(transacao *Transacao, query string, returnType interface{}, param
 
 // SelectOne executa um select no banco e retorna o primeiro resultado
 func SelectOne(transacao *Transacao, query string, returnType interface{}, params Dados) (interface{}, error) {
-	if database == nil {
+	if Database == nil {
 		logError("[SelectOne] Database not initialized.")
-		return nil, errors.New("database not initialized")
+		return nil, errors.New("Database not initialized")
 	}
 	sql, err := sql(query)
 	if err != nil {
@@ -245,7 +245,7 @@ func SelectOne(transacao *Transacao, query string, returnType interface{}, param
 	if transacao != nil && transacao.tx != nil {
 		q = transacao.tx.NewQuery(*sql)
 	} else {
-		q = database.NewQuery(*sql)
+		q = Database.NewQuery(*sql)
 	}
 	q.Prepare()
 	defer q.Close()
@@ -308,7 +308,7 @@ func insertIntoMap(filename, query string) {
 
 //InitDb inicializa a conexao com o DB
 func InitDb(loggerParam *ozzolog.Logger, params ...string) error {
-	if database != nil {
+	if Database != nil {
 		logError("[InitDb] Database already initialized.")
 		return nil
 	}
@@ -330,14 +330,14 @@ func InitDb(loggerParam *ozzolog.Logger, params ...string) error {
 	dbURL := p.GetString(*propertyURL, "")
 	banco, err := dbx.Open(*db, dbURL)
 	if err != nil {
-		logError("[InitDb] Error connecting to database: %s", err)
+		logError("[InitDb] Error connecting to Database: %s", err)
 		return err
 	}
 	printSQL = p.GetBool("printSql", false)
-	database = banco
+	Database = banco
 	logger = loggerParam
 	if printSQL && logger != nil {
-		database.LogFunc = logger.Info
+		Database.LogFunc = logger.Info
 		logger.Info("[InitDb] Connected to: " + dbURL)
 	}
 	return nil

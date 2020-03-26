@@ -4,7 +4,6 @@ import (
 	sqlpack "database/sql"
 	"errors"
 	"io/ioutil"
-	"runtime"
 	"sync"
 	"time"
 
@@ -35,14 +34,6 @@ func Close() {
 	if Database != nil {
 		Database.Close()
 	}
-}
-
-func init() {
-	runtime.SetFinalizer(logger, func() {
-		if logger != nil {
-			logger.Close()
-		}
-	})
 }
 
 //Transacao e uma transacao do banco de dados

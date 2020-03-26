@@ -19,7 +19,8 @@ import (
 	"github.com/magiconair/properties"
 )
 
-var database *dbx.DB = nil
+//Database is the database connection
+var Database *dbx.DB = nil
 var printSQL bool
 var mapQueries = make(map[string]string)
 var mapTimes = make(map[string]int64)
